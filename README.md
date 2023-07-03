@@ -1,33 +1,10 @@
-# Instagram Clone with REACT.JS! (Next.js, Tailwind CSS, Firebase v9, NextAuth, Recoil)
+# Instagram 2.0 with REACT.JS! (Next.js, Tailwind CSS, Firebase v9, NextAuth, Recoil)
 
-## Features
+# Features
+* Google Authentication: Implemented a secure authentication system that allows users to sign in/sign out of the application using their Google accounts.
 
-- Full user authentication: Implement a secure user authentication system that allows users to create accounts, log in, and manage their profiles. Protect sensitive user data and ensure a personalized experience for each user.
+* Add New Posts with Photo Upload: Enable users to create and share posts by uploading photos and give a caption. 
 
-- Like & Comment functionality: Enable users to interact with posts by liking and commenting on them. Foster engagement within the community and encourage user interaction through these essential features.
+* Like/Comment Functionality: Allow users to interact with posts by liking and commenting on them. 
 
-- Post images & captions on your feed: Allow users to share their images and accompanying captions on their feed. Provide a platform for self-expression and sharing moments with others.
-
-## Getting Started
-To set up and run the Instagram clone on your local machine, follow these steps:
-
-Clone the repository:
-
-`git clone <repository-url>`
-
-Install the dependencies:
-
-`cd instagram-clone`  
-`npm install`
-
-Configure Firebase v9 integration:
-
-1. Create a Firebase project on the Firebase Console.
-2. Obtain the Firebase configuration settings.
-3. Update the configuration file (firebase.config.js) with your Firebase project details.
-
-Start the development server:
-
-`npm run dev`
-
-Open your web browser and visit http://localhost:3000 to access the Instagram clone.
+Live app: http://localhost:3000 
