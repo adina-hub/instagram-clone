@@ -7,4 +7,4 @@
 
 * Like/Comment Functionality: Allow users to interact with posts by liking and commenting on them. 
 
-Live app: http://localhost:3000 
+Live app: https://instagram-clone-adina-hub.vercel.app/
