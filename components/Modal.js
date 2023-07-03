@@ -3,6 +3,10 @@ import { modalState } from '../atoms/modalAtom'
 import { Dialog, Transition } from '@headlessui/react'
 import { Fragment, useRef, useState } from 'react'
 import { CameraIcon } from '@heroicons/react/outline'
+import { db, storage } from '../firebase'
+import { addDoc, collection, doc, serverTimestamp, updateDoc } from 'firebase/firestore'
+import { useSession } from 'next-auth/react'
+import { ref, getDownloadURL, uploadString } from 'firebase/storage'
 
 function Modal() {
   const [open, setOpen] = useRecoilState(modalState)
@@ -10,11 +14,33 @@ function Modal() {
   const captionRef = useRef(null)
   const [loading, setLoading] = useState(false)
   const [selectedFile, setSelectedFile] = useState(null)
+  const { data: session } = useSession()
 
   const uploadPost = async () => {
     if(loading) return;
 
     setLoading(true)
+
+    const docRef = await addDoc(collection(db, 'posts'), {
+      username: session.user.username,
+      caption: captionRef.current.value,
+      profileImage: session.user.image,
+      timestamp: serverTimestamp()
+    })
+
+    const imageRef = ref(storage, `posts/${docRef.id}/image`)
+
+    await uploadString(imageRef, selectedFile, "data_url").then( async snapshot => {
+      const downloadUrl = await getDownloadURL(imageRef)
+
+      await updateDoc(doc(db, 'posts', docRef.id), {
+        image: downloadUrl
+      })
+    })
+
+    setOpen(false)
+    setLoading(false)
+    setSelectedFile(null)
   }
 
   const addImageToPost = (e) => {
@@ -120,8 +146,9 @@ function Modal() {
                     focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:text-sm
                     disabled:bg-gray-300 disabled:cursor-not-allowed 
                     hover:disabled:bg-gray-300'
+                    onClick={uploadPost}
                   >
-                    Upload Post
+                    {loading ? 'Uploading...' : 'Upload Post'}
                   </button>
                 </div>
               </div>
