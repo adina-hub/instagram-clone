@@ -13,44 +13,34 @@ function Post({ id, username, userImg, img, caption }) {
   const [likes, setLikes] = useState([])
   const [hasLiked, setHasLiked] = useState(false)
 
-  useEffect(
-    () => 
-      onSnapshot(
-        query(
-          collection(db, 'posts', id, 'comments'), 
-          orderBy('timestamp', 'desc')), 
-        (snapshot) =>  setComments(snapshot.docs)
-      ), 
-    [db]
-  )
+  useEffect(() => {
+    const unsubscribeComments = onSnapshot(
+      query(collection(db, 'posts', id, 'comments'), orderBy('timestamp', 'desc')),
+      (snapshot) => setComments(snapshot.docs)
+    )
+    const unsubscribeLikes = onSnapshot(
+      collection(db, 'posts', id, 'likes'),
+      (snapshot) => setLikes(snapshot.docs)
+    )
 
-  useEffect(
-    () => 
-      onSnapshot(
-          collection(db, 'posts', id, 'likes'), 
-        (snapshot) => {
-          setLikes(snapshot.docs)
-        }
-      ), 
-    [db, id]
-  )
+    return () => {
+      unsubscribeComments()
+      unsubscribeLikes()
+    }
+  }, [db, id])
 
-  useEffect(
-    () =>
-      setHasLiked(
-        likes.findIndex((like) => like.id === session?.user?.uid) !== -1
-      ),
-    [likes]
-  )
+  useEffect(() => {
+    setHasLiked(likes.findIndex((like) => like.id === session?.user?.uid) !== -1)
+  }, [likes, session])
 
   const likePost = async () => {
-    if(hasLiked) {
+    if (hasLiked) {
       await deleteDoc(doc(db, "posts", id, "likes", session.user.uid))
     } else {
-        await setDoc(doc(db, "posts", id, "likes", session.user.uid), {
-          username: session.user.username
-        })
-    } 
+      await setDoc(doc(db, "posts", id, "likes", session.user.uid), {
+        username: session.user.username
+      })
+    }
   }
   
   const sendComment = async (e) => {
@@ -93,33 +83,32 @@ function Post({ id, username, userImg, img, caption }) {
         </div>
       )}
 
-      <p className="p-5 truncate">
+      <div className="p-5 truncate">
         { likes?.length > 0 && (
           <p className="font-bold mb-1">{ likes.length } likes</p>
         ) }
         <span className="font-bold mr-1">{username}</span>
         {caption}
-      </p>
+      </div>
 
       {comments.length > 0 && (
         <div className="ml-10 h-20 overflow-y-scroll scrollbar-thumb-black scrollbar-thin">
-          {comments.map( comment => (
+          {comments.map(comment => (
             <div key={comment.id} className="flex items-center space-x-2 mb-3">
               <img src={comment.data().image} 
                    className="h-7 rounded-full" 
                    alt=""
               />
-              <p className="text-sm flex-1">
-                <span className="font-bold">{comment.data().username}</span>
-                {""}
+              <div className="text-sm flex-1">
+                <span className="font-bold">{comment.data().username}</span>{" "}
                 {comment.data().comment}
-              </p>
+              </div>
 
               <Moment fromNow className="pr-5 text-xs">
                 {comment.data().timestamp?.toDate()}
               </Moment>
             </div>
-          ) )}
+          ))}
         </div>
       )}
 
@@ -145,4 +134,4 @@ function Post({ id, username, userImg, img, caption }) {
   )
 }
 
-export default Post
+export default Post;

@@ -22,8 +22,8 @@ function Suggestions() {
         <h3 className="text-sm font-bold text-gray-400">Suggestions for you</h3>
         <button className="text-gray-600 font-semibold">See All</button>
       </div>
-      {suggestions.map( (suggestion) => (
-        <div key={suggestion.id} className="flex items-center justify-between mt-3">
+      {suggestions.map( (suggestion, index) => (
+        <div key={index} className="flex items-center justify-between mt-3">
           <img src={suggestion.avatar} alt="" className="w-10 h-10 rounded-full border p-[2px]"/>
           <div className="flex-1 ml-4">
             <h2 className="font-semibold text-sm">{suggestion.username}</h2>
